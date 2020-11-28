@@ -49,72 +49,24 @@
 
      - 캡슐화: 연관이 있는 변수와 함수를 클래스로 묶는 것
 
-   - Ex) 음악 재생 클래스
+   - Ex) 동물 울음소리
+
+     - <img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201129033449547.png" alt="image-20201129033449547" style="zoom:50%;" />
+
+     - crying() 메서드를 가지는 Animal 인터페이스를 만들고, 이를 implement한 각 동물 클래스 내에서 crying() 함수를 각 동물의 울음 방식에 맞게 재정의한다.
+
+     - 이렇게 캡슐화를 하면 동물이 추가되어도 클라이언트가 crying() 함수를 호출하는 부분을 건드릴 필요가 없으면서 쉽게 확장이 가능
 
      - ```java
-       class SoundPlayer {
-       	void play(){
-       		System.out.println("Play wav");
-       	}
-       }
-       
        public class Client {
-           public static void main(String[] args){
-               SoundPlayer sp = new SoundPlayer();
-               sp.play();
+           public static void main(String args[]){
+               Animal cat = new Cat();
+               Animal dog = new Dog();
+               
+               cat.crying();
+               dog.crying();
            }
-       }
-       ```
-
-     - 이렇게 wav만 재생 가능한 SoundPlayer 클래스에서 mp3파일도 재생할 수 있도록 요구사항이 변경된 경우
-
-     - 요구사항이 변경될 때마다 play() 메서드를 수정하는 것은 OCP에 위배!
-
-     - OCP를 만족하려면 아래와 같이 play() 메서드를 인터페이스로 분리해 구현한다.
-
-     - ```java
-       interface playAlgorithm {
-       	public void play();
-       }
-       
-       class Wav implements playAlgorithm {
-       	@Override
-       	public void play(){
-       		System.out.println("Play Wav");
-       	}
-       }
-       
-       class Mp3 implements playAlgorithm {
-       	@Override
-       	public void play(){
-       		System.out.println("Play Mp3");
-       	}
-       }
-       
-       /* 새로운 확장자에 대한 요구가 추가될 경우 위와 같이 playAlgorithm을 implement하는 새로운 클래스를 짜면 된다. */
-       ```
-
-     - ```java
-       class SoundPlayer {
-           private playAlgorithm file;
-           
-           public void setFile(playAlgorithm file){
-               this.file = file;
-           }
-           
-       	void play(){
-       		file.play(); // 받은 파일의 클래스에 소속된 play()가 실행됨
-       	}
-       }
-       
-       public class Client {
-           public static void main(String[] args){
-               SoundPlayer sp = new SoundPlayer();
-               sp.setFile(new Wav()); // wav로 골랐다가
-               sp.setFile(new Mp3()); // mp3로 변경하고
-               sp.play(); // mp3를 재생한다
-           }
-       }
+       } 
        ```
 
 3. **Liskov** Substitution Principle (LSP, 리스코프 치환 원칙)
@@ -140,47 +92,10 @@
      - 이러면 각 인터페이스의 메서드들이 서로 영향을 미치지 않게 할 수 있다!
 
 5. **Dependency** Inversion Property (DIP, 의존 역전 원칙)
-
    - 객체들이 서로 정보를 주고받을 때 의존 관계가 형성되는데, 이 때 객체들은 나름대로의 원칙을 갖고 정보를 주고 받아야 한다.
-
      - 나름대로의 원칙: "<u>추상성이 더 높은 클래스</u>(인터페이스 또는 추상 클래스)<u>와 의존 관계를 맺어야 한다</u>" → 캡슐화
-
-   - Ex) 음악 재생 클래스
-
-     - ```java
-       class SoundPlayer {
-           private playAlgorithm file;
-           
-           public void setFile(playAlgorithm file){
-               this.file = file;
-           }
-           
-       	void play(){
-       		file.play();
-       	}
-       }
-       ```
-
-     - setFile 메서드를 이용하여 실행하려는 파일을 쉽게 바꿀 수 있는데, 
-
-     - 여기서 또 새로운 포맷(ex. FLAC)을 실행시키고자 한다면
-
-     - 마찬가지로 새로운 클래스(FLAC)를 play()에 해당하는 playAlgorithm 인터페이스를 상속받아 구현하고, setFile 메서드를 이용하여 file 멤버 변수에 주입시키면 됨 **= 의존성 주입**
-
-     - ```java
-       class Flac implements playAlgorithm {
-       	@Override
-       	public void play(){
-       		System.out.println("Play Flac");
-       	}
-       }
-       ```
-
-     - 그러면 <u>Client 객체는 각 클래스의 play() 메서드에 직접 접근하지 않고, 인터페이스의 play() 메서드를 호출</u>함으로써 DIP를 만족할 수 있음
-
+     - 의존성 주입
    - Ex) 동물 울음소리
-
      - <img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201129033010687.png" alt="image-20201129033010687" style="zoom:50%;" />
-     - Client 객체가 추상성이 낮은 클래스(Cat, Dog, Bird)보다 추상성이 높은 클래스(Animal 인터페이스)와 의존 관계를 맺음
-     - 추상성이 낮은 클래스에 직접 접근하지 않고, 추상성이 높은 클래스를 통해 메서드 호출
+     - Client 객체가 추상성이 낮은 클래스(Cat, Dog, Bird)의 crying() 메서드에 직접 접근하지 않고, 추상성이 높은 클래스(Animal 인터페이스)의 crying() 메서드를 호출함으로써 DIP 만족
 
