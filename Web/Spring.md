@@ -5,6 +5,9 @@
 - 컨테이너
   - 인스턴스의 생명 주기를 관리하며, 생성된 인스턴스들에게 추가적인 기능을 제공하도록 하는 것
   - 작성한 코드의 처리과정을 위임받은 독립적 존재
+  - bean 객체들이 들어있는 통
+- bean
+  - 스프링 컨테이너 상에서 생성된 객체
 
 ## 특징
 
@@ -30,11 +33,79 @@
 - 목표: 낮은 결합도와 높은 응집도
 
 - 스프링은 IoC를 통해 어플리케이션을 구성하는 객체간의 낮은 결합도를 유지
+
 - 객체 생성 및 객체간 의존관계를 컨테이너가 처리
+
+- 비교
+
+  - 개발자가 직접 객체를 생성하여 코드를 제어
+
+    ```java
+    public class A {
+    
+        private B b;
+    
+        public A()
+            b = new B();
+        }
+    }
+    ```
+
+  - 컨테이너에 의해서 생성한 객체를 사용
+
+    ```java
+    public class A {
+    
+        @Autowired
+        private B b;
+    
+    }
+    ```
 
 ### DI(Dependency Injection, 의존성 주입)
 
-- 
+<img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201201032803348.png" alt="image-20201201032803348" style="zoom: 67%;" /> 
+
+- 의존성 관계: 객체 간의 결합 관계 
+- 의존성 주입: 객체가 필요로 하는 객체를 생성자 또는 setter를 통해 주입하는 것!
+- 하나의 객체에서 다른 객체의 변수나 메서드를 이용해야 한다면 이용하려는 객체에 대한 객체를 생성해야 하고, 생성된 객체의 레퍼런스 정보가 필요함
+- 의존 관계는 new라는 키워드를 통해 생성되는데
+  - A obj = new B(); 와 같이 짜면 A는 B에 의존하게 됨(깡한 결합도)
+    - 
+  - A라는 객체에서 B를 생성하는 것이 아니라
+  - 외부에서 생성된 B를 A에 주입함으로써 의존관계를 없앤다!
+  - ctx.getBean(...);
+  - <img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201201031014729.png" alt="image-20201201031014729" style="zoom: 67%;" />
+  - <img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201201031131316.png" alt="image-20201201031131316" style="zoom:67%;" />
+  - <img src="C:\Users\KJH\AppData\Roaming\Typora\typora-user-images\image-20201201031026065.png" alt="image-20201201031026065" style="zoom:67%;" />
+
+#### 의존성 주입 방법
+
+- XML을 통한 의존성 주입
+  - 분리
+    - <u>유지보수성</u>에 의의
+    - 그러나 xml이 너무 많아지면 오히려 유지보수성이 낮아짐..
+    - **시스템 전반에 영향을 주고, 이후에 변경 가능성이 있는 것은 xml로 설정**
+  - 주입 방법
+    - 생성자를 통한 의존성 주입
+      - 생성자에 인자로 주입하고자 하는 객체를 넣어준다.
+      - \<constructor-arg\> 태그의 ref 속성
+    - java config를 통한 의존성 주입
+      - set method 사용
+      - \<property\> 태그에서 name 속성
+- Annotation을 통한 의존성 주입
+  - 결합
+    - <u>생산성</u>에 의의
+    - 의미를 갖는 주석?
+    - 프로그램 규모가 커짐에 따라 XML이 가지는 설정정보의 양이 많아지는데, annotation은 직관적인 메타데이터 설정이 가능
+    - **설계시 확정되는 부분은 annotation 기반으로 설정**
+  - 주입 방법
+    - @Autowired(Spring)
+      - 속성의 설정자 메서드에 해당하는 역할을 자동으로 수행
+      - 객체의 <u>타입 → 이름 → Qualifier</u>를 기준으로 bean을 찾음
+    - @Resource(Java)
+      - setter, 속성값에 붙일 수 있으며, 생성자에는 못 붙임
+      - 객체의 <u>타입 → 이름 → Qualifier</u>을 기준으로 bean을 찾음
 
 ### AOP(Aspect Oriented Programming, 관점 지향 프로그래밍)
 

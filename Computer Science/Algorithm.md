@@ -1,4 +1,4 @@
-# Algorithm
+# Algorithm 알고리즘
 
 ## 정렬 시간복잡도 표
 
